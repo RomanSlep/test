@@ -1,0 +1,160 @@
+<!DOCUMENT
+>
+<html>
+	<head>
+		<script	src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script	src="http://underscorejs.org/underscore-min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+		
+	</head>
+	
+	<body>
+		<div id="main">
+			<h1>Котировки валют от {{Stocks.as_of}}</h1>
+			<div class="but" @click="forceRefresh">Обновить</div>
+			<div id="app">
+				
+				<table>
+					<tr>
+						<th>#</th>
+						<th>Название</th>
+						<th>Цена</th>
+						<th>Количество</th>
+					</tr>
+					<tr v-for="stock, index in Stocks.stock">
+						<td>{{index+1}}</td>
+						<td>{{stock.name}}</td>
+						<td>{{stock.price.amount.toFixed(2)}}</td>
+						<td>{{stock.volume.toFixed(0)}}</td>
+					</tr>
+				</table>			
+			</div>
+		</div>
+		
+		
+		<script>			
+			var App=new Vue({
+				el:'#main',
+				created(){
+					this.refreshStocks();
+					setInterval(()=>{
+						this.refreshStocks();
+					},15000)
+				},
+				data:{
+					Stocks:{
+						stock:[],
+						as_of:''
+					}
+				},
+				methods:{
+					
+					refreshStocks(){
+						var this_=this;
+						$.get("http://localhost:3000", function(resp){
+							
+							try{
+								this_.Stocks=JSON.parse(resp);
+								console.log('refresh');
+								}catch(e){
+								console.log('Error parse');	
+							}
+						});
+						
+					},
+					
+					forceRefresh(){
+						this.refreshStocks();
+					}
+				}
+			});
+			
+		</script>
+		<style>
+			
+			h1{
+			text-align:center;
+			color:grey;
+			}
+			#app{
+			width:600px;
+			margin:20px auto;
+			height:400px;
+			overflow-y:auto;
+			}
+			*{
+			font-weight:300;
+			font-family:Roboto;
+			}
+			table {
+			
+			font-size: 14px;
+			background: white;
+			width:100%;
+			border-collapse: collapse;
+			text-align: center;
+			}
+			
+			th {
+			font-weight: normal;
+			color: #039;
+			border-bottom: 2px solid #6678b1;
+			padding: 10px 8px;
+			}
+			
+			td {
+			border-bottom: 1px solid #ccc;
+			color: #669;
+			height: 50px;
+			transition: .3s linear;
+			
+			}
+			
+			tr:hover td {
+			color: #6699ff;
+			}
+			
+			::-webkit-scrollbar {
+			width: 8px;
+			background-color: white;
+			}
+			
+			
+			::-webkit-scrollbar-thumb {
+			height: 10px;
+			width: 8px;
+			background: #ececfb;
+			}
+			
+			::selection {
+			background-color: #1a1a1a;
+			color: #fff;
+			}
+			
+			.but{
+			transition:.3s;
+			background: white;
+			border: 1px solid #da9f9f;
+			color: #da9f9f;
+			display: inline;
+			padding: 8px 16px;
+			border-radius: 3px;
+			cursor: pointer;
+			}
+			
+			.but:hover{
+			background: #da9f9f;
+			border: 1px solid #da9f9f;
+			color: white;
+			}
+			
+			
+			#main{
+			max-width:800px;
+			margin:20px auto;
+			text-align:right;
+			}
+		</style>
+	</body>
+</html>	

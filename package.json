@@ -1,0 +1,11 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "author": "Roman",
+  "license": "ISC",
+  "dependencies": {
+    "sync-request": "^5.0.0"
+  }
+}
